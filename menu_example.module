@@ -73,6 +73,17 @@ function menu_example_menu() {
     'expanded' => TRUE,
   );
 
+  // Show a menu link in a menu other than the default "Navigation" menu.
+  // The menu must already exist.
+  $items['examples/menu_example_alternate_menu'] = array(
+    'title' => 'Menu Example : Menu in alternate menu',
+    // Machine name of the menu in which the link should appear.
+    'menu_name' => 'management',
+    'page callback' => '_menu_example_menu_page',
+    'page arguments' => array(t('This will be in the Management menu instead of the default Navigation menu')),
+    'access callback' => TRUE,
+  );
+
   return $items;
 }  // function menu_example_menu
 
@@ -91,3 +102,25 @@ function _menu_example_basic_instructions($content = NULL) {
   return '<div>' . $base_content . '</div><br /><div>' . $content . '</div>';
 }
 
+/**
+ * Page callback for use with most of the menu entries. The arguments it
+ * receives determine what it outputs.
+ *
+ * @param $content
+ *   The base content to output.
+ * @param $arg1
+ *   First additional argument from the path used to access the menu
+ * @param $arg2
+ *   Second additional URL argument
+ */
+function _menu_example_menu_page($content = NULL, $arg1 = NULL, $arg2 = NULL) {
+  $output = '<div>' . $content . '</div>';
+
+  if (!empty($arg1)) {
+    $output .= '<div>' . t('Argument 1 = %arg', array('%arg' => $arg1)) . '</div>';
+  }
+  if (!empty($arg2)) {
+    $output .= '<div>' . t('Argument 2 = %arg', array('%arg' => $arg2)) . '</div>';
+  }
+  return $output;
+}
