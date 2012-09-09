@@ -83,6 +83,7 @@ function menu_example_menu() {
     'page arguments' => array(t('This will be in the Management menu instead of the default Navigation menu')),
     'access callback' => TRUE,
     'weight'          => 99,     // High value (ex 99) moves item to right in Mgmt Menu
+    'expanded' => TRUE,
   );
 
   // A menu entry with simple permissions using user_access().
@@ -90,11 +91,38 @@ function menu_example_menu() {
   // First, provide a courtesy menu item that mentions the existence of the
   // permissioned item.
   $items['examples/menu_example/permissioned'] = array(
-    'title'           => 'Permissioned Example',
+    'title'           => 'Permissioned Example Courtesy Page',
     'page callback'   => '_menu_example_menu_page',
     'page arguments'  => array(t('A menu item that requires the "access protected menu example" permission is at <a href="!link">examples/menu_example/permissioned/controlled</a>', array('!link' => url('examples/menu_example/permissioned/controlled')))),
     'access callback' => TRUE,
     'expanded'        => TRUE,
+  );
+
+  // Now provide the actual permissioned menu item.
+  $items['examples/menu_example/permissioned/controlled'] = array(
+    'title' => 'Permissioned Example Controlled Page',
+    'description' => 'This menu entry will not appear and the page will not be accessible without the "access protected menu example" permission.',
+    'page callback' => '_menu_example_menu_page',
+    'page arguments' => array(t('This menu entry will not show and the page will not be accessible without the "access protected menu example" permission.')),
+    // For a permissioned menu entry, we provide an access callback which 
+    // determines whether the current user should have access. The default is
+    // user_access(), which we'll use in this case. Since it's the default, 
+    // we don't have to enter it.
+    //  'access callback' => 'user_access',
+
+    // The 'access arguments' are passed to the 'access callback to help it
+    // do its job. In the case of user_access(), we need to pass a permission
+    // as the first argument.  Per hook_menu API docs, 'access arguments' is an array.
+
+    'access arguments' => array('access protected menu example'),
+
+    // Note the 'access protected menu example' permission will not show up in
+    // the admin/people/permissions page until you implement hook_permission.
+
+     // The optional weight element tells how to order the submenu items.
+     // Higher weights are "heavier", dropping to the bottom of the menu.
+     'weight' => 10,
+     'expanded' => TRUE,
   );
 
   return $items;
