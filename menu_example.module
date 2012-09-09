@@ -76,12 +76,25 @@ function menu_example_menu() {
   // Show a menu link in a menu other than the default "Navigation" menu.
   // The menu must already exist.
   $items['examples/menu_example_alternate_menu'] = array(
-    'title' => 'Menu Example : Menu in alternate menu',
+    'title' => 'Menu Example : Menu in Management menu',
     // Machine name of the menu in which the link should appear.
     'menu_name' => 'management',
     'page callback' => '_menu_example_menu_page',
     'page arguments' => array(t('This will be in the Management menu instead of the default Navigation menu')),
     'access callback' => TRUE,
+    'weight'          => 99,     // High value (ex 99) moves item to right in Mgmt Menu
+  );
+
+  // A menu entry with simple permissions using user_access().
+
+  // First, provide a courtesy menu item that mentions the existence of the
+  // permissioned item.
+  $items['examples/menu_example/permissioned'] = array(
+    'title'           => 'Permissioned Example',
+    'page callback'   => '_menu_example_menu_page',
+    'page arguments'  => array(t('A menu item that requires the "access protected menu example" permission is at <a href="!link">examples/menu_example/permissioned/controlled</a>', array('!link' => url('examples/menu_example/permissioned/controlled')))),
+    'access callback' => TRUE,
+    'expanded'        => TRUE,
   );
 
   return $items;
