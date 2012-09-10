@@ -119,10 +119,37 @@ function menu_example_menu() {
     // Note the 'access protected menu example' permission will not show up in
     // the admin/people/permissions page until you implement hook_permission.
 
-     // The optional weight element tells how to order the submenu items.
-     // Higher weights are "heavier", dropping to the bottom of the menu.
-     'weight' => 10,
-     'expanded' => TRUE,
+    // The optional weight element tells how to order the submenu items.
+    // Higher weights are "heavier", dropping to the bottom of the menu.
+    'weight' => 10,
+    'expanded' => TRUE,
+  );
+
+
+  // We will define our own "access callback" function "menu_example_custom_access",
+  // rather than the default 'user_access'.
+  //
+  // The function takes a "role" of user as an argument.
+
+  // Here is the parent menu item for Custom Access Callback
+  $items['examples/menu_example/custom_access'] = array(
+    'title'           => 'Custom Access Callback Open',
+    'page callback'   => '_menu_example_menu_page',
+    'page arguments'  => array(t('A menu item that requires the user to possess a role of "authenticated user" is at <a href="!link">examples/menu_example/custom_access/page</a>',
+                                array('!link' => url('examples/menu_example/custom_access/page')))),
+    'access callback' => TRUE,    // Leave parent menu route open
+    'expanded'        => TRUE,
+    'weight'          => -5,
+  );
+
+  // Here is the protected custom access route
+  $items['examples/menu_example/custom_access/page'] = array(
+    'title'            => 'Custom Access Callback Protected',
+    'description'      => 'This menu entry will not show and the page will not be accessible without the user being an "authenticated user".',
+    'page callback'    => '_menu_example_menu_page',
+    'page arguments'   => array(t('This menu entry will not be visible and access will result in a 403 error unless the user has the "authenticated user" role. This is accomplished with a custom access callback.')),
+    'access callback'  => 'menu_example_custom_access',
+    'access arguments' => array('authenticated user'),
   );
 
   return $items;
@@ -164,4 +191,28 @@ function _menu_example_menu_page($content = NULL, $arg1 = NULL, $arg2 = NULL) {
     $output .= '<div>' . t('Argument 2 = %arg', array('%arg' => $arg2)) . '</div>';
   }
   return $output;
+}
+
+/**
+ * Implements hook_permission() to provide a demonstration access string.
+ */
+function menu_example_permission() {
+  return array(
+    'access protected menu example' => array(
+      'title' => t('Access the protected menu example'),
+    ),
+  );
+}
+
+/**
+ * Determine if the current user has the role specified.
+ *
+ * @param $role_name
+ *   The role required for access
+ * @return bool
+ *   True if the acting user has the role specified.
+ */
+function menu_example_custom_access($role_name){
+  $access_granted = in_array($role_name, $GLOBALS['user']->roles);
+  return $access_granted;
 }
