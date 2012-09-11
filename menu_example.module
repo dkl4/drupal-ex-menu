@@ -104,9 +104,9 @@ function menu_example_menu() {
     'description' => 'This menu entry will not appear and the page will not be accessible without the "access protected menu example" permission.',
     'page callback' => '_menu_example_menu_page',
     'page arguments' => array(t('This menu entry will not show and the page will not be accessible without the "access protected menu example" permission.')),
-    // For a permissioned menu entry, we provide an access callback which 
+    // For a permissioned menu entry, we provide an access callback which
     // determines whether the current user should have access. The default is
-    // user_access(), which we'll use in this case. Since it's the default, 
+    // user_access(), which we'll use in this case. Since it's the default,
     // we don't have to enter it.
     //  'access callback' => 'user_access',
 
@@ -117,7 +117,7 @@ function menu_example_menu() {
     'access arguments' => array('access protected menu example'),
 
     // Note the 'access protected menu example' permission will not show up in
-    // the admin/people/permissions page until you implement hook_permission.
+    // the admin/people/permissions page until you implement hook_permission().
 
     // The optional weight element tells how to order the submenu items.
     // Higher weights are "heavier", dropping to the bottom of the menu.
@@ -150,6 +150,26 @@ function menu_example_menu() {
     'page arguments'   => array(t('This menu entry will not be visible and access will result in a 403 error unless the user has the "authenticated user" role. This is accomplished with a custom access callback.')),
     'access callback'  => 'menu_example_custom_access',
     'access arguments' => array('authenticated user'),
+  );
+
+  // A menu router entry with no menu link. This could be used any time we
+  // don't want the user to see a link in the menu. Otherwise, it's the same
+  // as the "simplest" entry above. MENU_CALLBACK is use for all menu items
+  // which don't need a visible menu link, including services and other pages
+  // that may be linked to but are not intended to be accessed directly.
+
+  // First, provide a courtesy link in the menu so people can find this
+
+  $items['examples/menu_example/path_only'] = array(
+      'title'            => 'MENU_CALLBACK example courtesy page',
+      'page callback'    => '_menu_example_menu_page',
+      'page arguments'   => array(t('A menu entry with no menu link (MENU_CALLBACK) is at <a href="!link">!link</a>',
+                                    array('!link' => url('examples/menu_example/path_only/callback')))),
+      'access callback'  => TRUE,
+      'access arguments' => array('administer name'),
+      'weight'           => 20,
+      'menu_name'        => 'Navigation',              // This is default menu
+      'type'             => MENU_NORMAL_ITEM,          // Give us a Nav link for courtesy
   );
 
   return $items;
@@ -212,7 +232,7 @@ function menu_example_permission() {
  * @return bool
  *   True if the acting user has the role specified.
  */
-function menu_example_custom_access($role_name){
+function menu_example_custom_access($role_name) {
   $access_granted = in_array($role_name, $GLOBALS['user']->roles);
   return $access_granted;
 }
