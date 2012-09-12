@@ -212,6 +212,24 @@ function menu_example_menu() {
     'weight' => 1,                  // Here wt may only apply to the tabs
   );
 
+  // Now add the rest of the LOCAL_TASK tab entries.
+  foreach (array(t('second') => 2, t('third') => 3, t('fourth') => 4) as $tabname => $weight) {
+    $items["examples/menu_example/tabs/$tabname"] = array(
+      'type'            => MENU_LOCAL_TASK,
+      'title'           => $tabname,
+      'page callback'   => '_menu_example_menu_page',
+      'page arguments'  => array(t('This is the tab "@tabname" in the "basic tabs" example', array('@tabname' => $tabname))),
+      'access callback' => TRUE,
+
+    // The weight property overrides the default alphabetic ordering of menu
+    // entries, allowing us to get our tabs in the order we want.
+      'weight' => $weight,       // Again, this seems only to apply to tabs, not to Nav menu links
+    );
+  }
+
+
+
+
   return $items;
 }  // function menu_example_menu
 
