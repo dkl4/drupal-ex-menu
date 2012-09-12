@@ -200,7 +200,16 @@ function menu_example_menu() {
     'page callback'   => '_menu_example_menu_page',
     'page arguments'  => array(t('This is the "tabs" menu entry.')),
     'access callback' => TRUE,
-    'weight'          => 30,         // Put this lower in the Nav link block than above MENU_CALLBACK
+    'weight'          => 30,         // Put this lower in the Nav link block than above MENU_CALLBACK example @ wt = 20
+  );
+
+  // For the default local task, we need very little configuration, as the
+  // callback and other conditions are handled by the parent callback.
+  // With only one "tab", I don't think you actually see any tabs -- need at least two LOCAL_TASKS
+  $items['examples/menu_example/tabs/default'] = array(
+    'type'   => MENU_DEFAULT_LOCAL_TASK,
+    'title'  => 'Default primary tab',
+    'weight' => 1,                  // Here wt may only apply to the tabs
   );
 
   return $items;
