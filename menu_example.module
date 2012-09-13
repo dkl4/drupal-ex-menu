@@ -250,6 +250,19 @@ function menu_example_menu() {
   }
 
 
+  // All the portions of the URL after the base menu are passed to the page
+  // callback as separate arguments, and can be captured by the page callback
+  // in its argument list. Our _menu_example_menu_page() function captures
+  // arguments in its function signature and can output them.
+  $items['examples/menu_example/use_url_arguments'] = array(
+    'title'           => 'Extra Arguments',
+    'description'     => 'The page callback can use the arguments provided after the path used as key',
+    'page callback'   => '_menu_example_menu_page',
+    'page arguments'  => array(t('This page demonstrates using arguments in the path (portions of the path after "menu_example/url_arguments". For example, access it with <a href="!link1">!link1</a> or <a href="!link2">!link2</a>).', array('!link1' => url('examples/menu_example/use_url_arguments/one/two'), '!link2' => url('examples/menu_example/use_url_arguments/firstarg/secondarg')))),
+    'access callback' => TRUE,
+    'weight'          => 40,
+  );
+
 
 
   return $items;
