@@ -497,7 +497,6 @@ function menu_example_menu_alter(&$items) {
  *   string to be prepended to current user's name.
  */
 function _menu_example_simple_title_callback($base_string) {
-  //return "HI DKL";
   global $user;
   $username = !empty($user->name) ? $user->name : t('anonymous');
   return $base_string . ' ' . $username;
