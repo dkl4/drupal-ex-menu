@@ -227,6 +227,28 @@ function menu_example_menu() {
     );
   }
 
+  // Finally, we'll add secondary tabs to the default tab of the tabs entry.
+
+  // The default local task needs very little information.
+  // Note the path.  We're under FIRST which came from the first (parent) set of tabs
+  $items['examples/menu_example/tabs/default/first'] = array(
+    'type'  => MENU_DEFAULT_LOCAL_TASK,
+    'title' => 'first (default) sub',
+    // The additional page callback and related items are handled by the
+    // parent menu item.
+  );
+
+  // Need at least two sub-tabs for one to be seen
+  foreach (array(t('second-sub'), t('third-sub')) as $tabname) {
+    $items["examples/menu_example/tabs/default/$tabname"] = array(
+      'type' => MENU_LOCAL_TASK,
+      'title' => $tabname,
+      'page callback' => '_menu_example_menu_page',
+      'page arguments' => array(t('This is the secondary tab "@tabname" in the "basic tabs" example "default" tab', array('@tabname' => $tabname))),
+      'access callback' => TRUE,
+    );
+  }
+
 
 
 
