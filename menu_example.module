@@ -321,9 +321,13 @@ function menu_example_menu() {
   // In addition, if (in this case) menu_example_arg_optional_TO_ARG() exists,
   // then a menu link can be created using the results of that function as a
   // default for %menu_example_arg_optional.
+  //
   // To get this to work, go to this URL : examples/menu_example/default_arg/99
-  //   This will call menu_example_arg_optional_load below, which will call
-  //     _menu_example_mappings below, which returns "Jackpot!" for the 99 arg
+  // This will call menu_example_arg_optional_load below, which will call
+  //   _menu_example_mappings below, which returns "Jackpot!" for the 99 arg
+  //
+  // Note you won't get a Nav block menu link until you add the menu_example_arg_optional_to_arg
+  //   function below.
   //         0          1            2                 3 = 'page arguments'
   $items['examples/menu_example/default_arg/%menu_example_arg_optional'] = array(
     'title'           => 'Processed Placeholder Arguments',
@@ -461,3 +465,32 @@ function menu_example_arg_optional_load($id) {
     return t('Sorry, the id %id was not found to be loaded', array('%id' => $id));
   }
 }
+
+
+/**
+ * This is an extension of the magical loading of objects from positional URL params
+ *
+ * A to_arg() function is used to provide a default for the arg in the
+ * wildcard. The purpose is to provide a menu link that will function if no
+ * argument is given. For example, in the case of the menu item
+ * 'examples/menu_example/default_arg/%menu_example_arg_optional' the third argument
+ * is required, and the menu system cannot make a menu link using this path
+ * since it contains a placeholder. However, when the to_arg() function is
+ * provided, the menu system will create a menu link pointing to the path
+ * which would be created with the to_arg() function filling in the
+ * %menu_example_arg_optional.
+ *
+ * @param $arg
+ *   The arg (URL fragment) to be tested.
+ */
+function menu_example_arg_optional_to_arg($arg) {
+  // If our argument is not provided, give a default of 99.
+  // This is how we get the "default" of 99 referenced above in _menu_example_mappings
+  // This will give a Nav menu link of form 'examples/menu_example/default_arg/99'
+  // where 99 is a default value.  In practice, the default would be something like
+  // the user Id of the logged in user.
+  return (empty($arg) || $arg == '%') ? 99 : $arg;
+}
+/**
+ * @} End of "defgroup menu_example".
+ */
