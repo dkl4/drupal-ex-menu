@@ -443,6 +443,54 @@ function _menu_example_mappings($id) {
 
 
 /**
+ * Implements hook_menu_alter().
+ *
+ * Changes the path 'examples/menu_example/menu_original_path' to 'examples/menu_example/menu_altered_path'.
+ * Changes the title callback of the 'user/UID' menu item.
+ *
+ * Remember that hook_menu_alter() only runs at menu_rebuild() time, not every
+ * time the page is built, so this typically happens only at cache clear time.
+ *
+ * @param $items
+ *   The complete list of menu router items ready to be written to the
+ *   menu_router table.
+ */
+function menu_example_menu_alter(&$items) {
+  // Note how you can alter multiple menus within one hook_menu_alter.  We change
+  // two things in this example.
+  //
+  // Change the path 'examples/menu_example/menu_original_path' to 'examples/menu_example/menu_altered_path'. This change will
+  // prevent the page from appearing at the original path (since the item is being unset).
+  // You will need to go to examples/menu_example/menu_altered_path manually to see the page.
+  //
+  // Originally, if you went to 'examples/menu_example/menu_original_path' you got a page with title
+  // "Menu path that WILL BE altered by hook_menu_alter()"
+  // Now, with the hook_menu_alter, the menu_original_path leads to a page with title "Menu Example"
+  // which is the base page of the Menu Example (along with an ignored extra path arg of /menu_original_path"
+  // This is because we unset (get rid of) the meaning of the path to examples/menu_example/menu_original_path
+  //
+  // Also, note that the link (and the link text) in the Menu Nav block was changed from
+  // "WILL BE altered" to "ALTERED BY".
+  //
+  // There is nothing fancy about the "altering". You just change the values of the $items[] values
+  // from the original (see above) to whatever you want them to be.  May also require some unsetting.
+  if (!empty($items['examples/menu_example/menu_original_path'])) {
+    $items['examples/menu_example/menu_altered_path'] = $items['examples/menu_example/menu_original_path'];
+    $items['examples/menu_example/menu_altered_path']['title'] = 'Menu item altered by hook_menu_alter()';
+    unset($items['examples/menu_example/menu_original_path']);
+  }
+
+  // Here we will change the title callback to our own function, changing the
+  // 'user' link from the traditional to always being "username's account".
+  // This will, for example, change the title for 'user/admin/1' from "admin" to "admin's account"
+  // See menu_example_user_page_title() defined below.
+  if (!empty($items['user/%user'])) {
+    $items['user/%user']['title callback'] = 'menu_example_user_page_title';
+  }
+}
+
+
+/**
  * Title callback to rewrite the '/user' menu link.
  *
  * @param $base_string
@@ -453,6 +501,18 @@ function _menu_example_simple_title_callback($base_string) {
   global $user;
   $username = !empty($user->name) ? $user->name : t('anonymous');
   return $base_string . ' ' . $username;
+}
+
+
+/**
+ * Title callback to rename the title dynamically, based on user_page_title().
+ *
+ * @param $account
+ *   User account related to the visited page.
+ */
+function menu_example_user_page_title($account) {
+  // This is used in the second half of our hook_menu_alter implementation
+  return is_object($account) ? t("@name's account", array('@name' => format_username($account))) : '';
 }
 
 
