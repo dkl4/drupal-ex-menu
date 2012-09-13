@@ -264,6 +264,21 @@ function menu_example_menu() {
   );
 
 
+  // The menu title can be dynamically created by using the 'title callback'
+  // which by default is t(). Here we provide a title callback which adjusts
+  // the menu title based on the current user's username.
+  $items['examples/menu_example/title_callbacks'] = array(
+    'title callback'  => '_menu_example_simple_title_callback',
+    'title arguments' => array(t('Dynamic title: username = ')),
+    'description'     => 'The title of this menu item is dynamically generated',
+    'page callback'   => '_menu_example_menu_page',
+    'page arguments'  => array(t('The menu title is dynamically changed by the title callback')),
+    'access callback' => TRUE,
+    'weight'          => 50,
+  );
+
+
+
 
   return $items;
 }  // function menu_example_menu
@@ -328,4 +343,18 @@ function menu_example_permission() {
 function menu_example_custom_access($role_name) {
   $access_granted = in_array($role_name, $GLOBALS['user']->roles);
   return $access_granted;
+}
+
+
+/**
+ * Title callback to rewrite the '/user' menu link.
+ *
+ * @param $base_string
+ *   string to be prepended to current user's name.
+ */
+function _menu_example_simple_title_callback($base_string) {
+  //return "HI DKL";
+  global $user;
+  $username = !empty($user->name) ? $user->name : t('anonymous');
+  return $base_string . ' ' . $username;
 }
