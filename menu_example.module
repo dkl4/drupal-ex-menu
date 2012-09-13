@@ -269,7 +269,7 @@ function menu_example_menu() {
   // the menu title based on the current user's username.
   $items['examples/menu_example/title_callbacks'] = array(
     'title callback'  => '_menu_example_simple_title_callback',
-    'title arguments' => array(t('Dynamic title: username = ')),
+    'title arguments' => array(t('Dynamic title: username =') . ' '),
     'description'     => 'The title of this menu item is dynamically generated',
     'page callback'   => '_menu_example_menu_page',
     'page arguments'  => array(t('The menu title is dynamically changed by the title callback')),
@@ -277,6 +277,39 @@ function menu_example_menu() {
     'weight'          => 50,
   );
 
+
+  // Sometimes we need to capture a specific argument within the menu path,
+  // as with the menu entry 'example/menu_example/placeholder_argument/3333/display',
+  // where we need to capture the "3333". In that case, we use a placeholder in
+  // the path provided in the menu entry. The (odd) way this is done is by using
+  // array(numeric_position_value) as the value for 'page arguments'. The
+  // numeric_position_value is the zero-based index of the portion of the URL
+  // which should be passed to the 'page callback'.
+
+  // First we provide a courtesy link with information on how to access
+  // an item with a placeholder.
+  $items['examples/menu_example/placeholder_argument'] = array(
+    'title'           => 'Placeholder Arguments',
+    'page callback'   => '_menu_example_menu_page',
+    'page arguments'  => array(t('Demonstrate placeholders by visiting <a href="!link">examples/menu_example/placeholder_argument/3343/display</a>', array('!link' => url('examples/menu_example/placeholder_argument/3343/display')))),
+    'access callback' => TRUE,
+    'weight'          => 60,
+  );
+
+  // Now the actual path. Note the 'page arguments' value of array(3) comes from the 3 (%) URL position below.
+  //           0        1                 2          3    4
+  $items['examples/menu_example/placeholder_argument/%/display'] = array(
+    'title'           => 'Placeholder Arguments',
+    'page callback'   => '_menu_example_menu_page',
+
+    // Pass the value of '%', which is zero-based argument 3, to the
+    // 'page callback'. So if the URL is
+    //       0         1                 2          3     4
+    // 'examples/menu_example/placeholder_argument/333/display' then the value 333
+    // will be passed into the 'page callback'.
+    'page arguments'  => array(3),         // Here, 'page arguments' takes the value of $content in _menu_example_menu_page below
+    'access callback' => TRUE,
+  );
 
 
 
