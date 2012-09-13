@@ -338,6 +338,16 @@ function menu_example_menu() {
   );
 
 
+  // This is the original menu entry which will be subsequently changed
+  // by the hook_menu_alter implementation below.
+  $items['examples/menu_example/menu_original_path'] = array(
+    'title'           => 'Menu path that will be altered by hook_menu_alter()',
+    'page callback'   => '_menu_example_menu_page',
+    'page arguments'  => array(t('This menu item was created strictly to allow the hook_menu_alter() function to have something to operate on. hook_menu defined the path as examples/menu_example/menu_original_path. The hook_menu_alter() changes it to examples/menu_example/menu_altered_path. You can try navigating to both paths and see what happens!')),
+    'access callback' => TRUE,
+    'weight'          => 80,
+  );
+
 
   return $items;
 }  // function menu_example_menu
