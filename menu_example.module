@@ -321,6 +321,9 @@ function menu_example_menu() {
   // In addition, if (in this case) menu_example_arg_optional_TO_ARG() exists,
   // then a menu link can be created using the results of that function as a
   // default for %menu_example_arg_optional.
+  // To get this to work, go to this URL : examples/menu_example/default_arg/99
+  //   This will call menu_example_arg_optional_load below, which will call
+  //     _menu_example_mappings below, which returns "Jackpot!" for the 99 arg
   //         0          1            2                 3 = 'page arguments'
   $items['examples/menu_example/default_arg/%menu_example_arg_optional'] = array(
     'title'           => 'Processed Placeholder Arguments',
@@ -399,6 +402,33 @@ function menu_example_custom_access($role_name) {
 
 
 /**
+ * Utility function to provide mappings from integers to some strings.
+ * This would normally be some database lookup to get an object or array from
+ * a key.
+ *
+ * Used by menu_example_arg_optional_load below and "magic positional loading" $items above.
+ *
+ * @param $id
+ *
+ * @return
+ *   The string to which the integer key mapped, or NULL if it did not map.
+ */
+function _menu_example_mappings($id) {
+  $mapped_value = NULL;
+  static $mappings = array(
+    1  => 'one',
+    2  => 'two',
+    3  => 'three',
+    99 => 'jackpot! default',
+  );
+  if (isset($mappings[$id])) {
+    $mapped_value = $mappings[$id];
+  }
+  return $mapped_value;      // This seems to return a scalar string
+}
+
+
+/**
  * Title callback to rewrite the '/user' menu link.
  *
  * @param $base_string
@@ -409,4 +439,25 @@ function _menu_example_simple_title_callback($base_string) {
   global $user;
   $username = !empty($user->name) ? $user->name : t('anonymous');
   return $base_string . ' ' . $username;
+}
+
+
+/**
+ * Loads an item based on its $id.
+ *
+ * See above $items['examples/menu_example/default_arg/%menu_example_arg_optional'] = array(
+ *
+ * In this case we're just creating a more extensive string. In a real example
+ * we would load or create some type of object.
+ *
+ * @param $id
+ */
+function menu_example_arg_optional_load($id) {
+  $mapped_value = _menu_example_mappings($id);
+  if (!empty($mapped_value)) {
+    return t('Loaded value was %loaded', array('%loaded' => $mapped_value));
+  }
+  else {
+    return t('Sorry, the id %id was not found to be loaded', array('%id' => $id));
+  }
 }
