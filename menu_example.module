@@ -312,6 +312,25 @@ function menu_example_menu() {
   );
 
 
+  // Drupal provides magic placeholder processing as well, so if the placeholder
+  // is '%menu_example_arg_optional', the function
+  // menu_example_arg_optional_LOAD($arg) will be called to translate the path
+  // argument to a more substantial OBJECT. $arg will be the value of the
+  // placeholder. Then the return value of menu_example_id_load($arg) will be
+  // passed to the 'page callback'.
+  // In addition, if (in this case) menu_example_arg_optional_TO_ARG() exists,
+  // then a menu link can be created using the results of that function as a
+  // default for %menu_example_arg_optional.
+  //         0          1            2                 3 = 'page arguments'
+  $items['examples/menu_example/default_arg/%menu_example_arg_optional'] = array(
+    'title'           => 'Processed Placeholder Arguments',
+    'page callback'   => '_menu_example_menu_page',
+    'page arguments'  => array(3),  // arg 3 (4rd arg) is the one we want.
+    'access callback' => TRUE,
+    'weight'          => 70,
+  );
+
+
 
   return $items;
 }  // function menu_example_menu
